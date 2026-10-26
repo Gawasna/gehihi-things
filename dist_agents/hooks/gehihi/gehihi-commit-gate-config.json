@@ -1,0 +1,57 @@
+{
+  "_schema": "commit-gate-config v2",
+  "_doc": [
+    "hardPatterns: PowerShell regex. Matched files are HARD DENIED from staging.",
+    "  No override. These files must never appear in version control.",
+    "  Paths are normalized to forward slashes before matching.",
+    "  This list REPLACES the script built-in defaults when non-empty.",
+    "",
+    "softPatterns: Array of {pattern, hint} objects.",
+    "  Matched files trigger force_ask (human approval required per staging operation).",
+    "  Agent cannot self-approve. No persistent whitelist exists.",
+    "  Use for files that are UNUSUAL to commit but occasionally legitimate.",
+    "",
+    "secretPatternOverrides: (optional) Replace the built-in secret-scanning regex list.",
+    "  If empty [], the script built-in patterns are used."
+  ],
+
+  "hardPatterns": [
+    "^\\.gemini[/\\\\]",
+    "TRACE[^/\\\\]*\\.md$",
+    "tomb\\.md$",
+
+    "^tasks[/\\\\]",
+    "^specs[/\\\\]",
+    "^trace[/\\\\]",
+    "^research[/\\\\]",
+    "^\\.agents[/\\\\]",
+    "node_modules[/\\\\]",
+    "\\.(pem|key|pfx|pkcs12)$",
+    "id_rsa"
+  ],
+
+  "softPatterns": [
+    {
+      "pattern": "\\.puml$",
+      "hint": "PlantUML diagram source. Usually not committed (generated/visualized locally). Confirm this file is intentionally version-controlled."
+    },
+    {
+      "pattern": "\\.log$",
+      "hint": "Log file. Should be in .gitignore. Confirm this is not an accidental staging."
+    },
+    {
+      "pattern": "^dist[/\\\\]",
+      "hint": "Build output directory. Confirm this artifact is intentionally source-controlled (e.g., pre-built release asset)."
+    },
+    {
+      "pattern": "^coverage[/\\\\]",
+      "hint": "Test coverage output. Should not be committed. Confirm this is intentional."
+    },
+    {
+      "pattern": "\\.env(\\..*)?$",
+      "hint": ".env file may contain secrets. Secret scan already ran, but confirm this file is safe for version control (e.g., .env.example only)."
+    }
+  ],
+
+  "secretPatternOverrides": []
+}
