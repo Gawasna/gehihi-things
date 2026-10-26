@@ -31,20 +31,18 @@ $RepoName   = "gehihi-things"
 $Branch     = "main"
 $RawBaseUrl = "https://raw.githubusercontent.com/$RepoOwner/$RepoName/$Branch"
 
-$SourceRoot = $null
-if ($MyInvocation.MyCommand.Definition) {
-    $SourceRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
+$SourceRoot = $PSScriptRoot
+$IsRemote   = $true
+$DistDir    = $null
+
+if (-not [string]::IsNullOrWhiteSpace($SourceRoot) -and (Test-Path -LiteralPath (Join-Path $SourceRoot "dist_agents"))) {
+    $DistDir  = Join-Path $SourceRoot "dist_agents"
+    $IsRemote = $false
 }
 
-$IsRemote = $true
-$DistDir  = $null
-
-if ($SourceRoot) {
-    $localDist = Join-Path $SourceRoot "dist_agents"
-    if (Test-Path $localDist) {
-        $DistDir  = $localDist
-        $IsRemote = $false
-    }
+# Allow setting package via environment variable for iex pipelines
+if ([string]::IsNullOrWhiteSpace($Package) -and -not [string]::IsNullOrWhiteSpace($env:GEHIHI_PACKAGE)) {
+    $Package = $env:GEHIHI_PACKAGE
 }
 
 # ------------------------------------------------------------------------------
@@ -234,7 +232,7 @@ if (-not [string]::IsNullOrWhiteSpace($Package)) {
 }
 
 # Interactive Menu
-Clear-Host
+try { Clear-Host } catch {}
 Write-Host "==================================================================" -ForegroundColor Magenta
 Write-Host "               GEHIHI-THINGS INSTALLER                           " -ForegroundColor Magenta
 Write-Host "==================================================================" -ForegroundColor Magenta

@@ -36,5 +36,10 @@ Script sẽ mở menu tương tác, chọn gói cần cài.
 
 Chạy tự động (không hiện menu):
 ```powershell
-Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Gawasna/gehihi-things/main/install.ps1" -ArgumentList "-Package commit-gate" | Invoke-Expression
+& ([scriptblock]::Create((Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Gawasna/gehihi-things/main/install.ps1"))) -Package commit-gate
+```
+
+Hoặc qua biến môi trường:
+```powershell
+$env:GEHIHI_PACKAGE="commit-gate"; Invoke-RestMethod -Uri "https://raw.githubusercontent.com/Gawasna/gehihi-things/main/install.ps1" | Invoke-Expression
 ```
